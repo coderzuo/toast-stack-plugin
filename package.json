@@ -1,0 +1,17 @@
+{
+  "name": "toast-stack-plugin",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "bun run build.ts"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "^1.14.20",
+    "@opentui/core": "^0.2.6",
+    "@opentui/solid": "^0.2.6",
+    "solid-js": "^1.9.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

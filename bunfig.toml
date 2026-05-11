@@ -1,0 +1,2 @@
+[build]
+preload = ["@opentui/solid/preload"]
