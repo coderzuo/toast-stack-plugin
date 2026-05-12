@@ -8,6 +8,7 @@ import { createComponent as _$createComponent } from "@opentui/solid";
 import { setProp as _$setProp } from "@opentui/solid";
 import { createElement as _$createElement } from "@opentui/solid";
 import { createSignal, For } from "solid-js";
+import { TextAttributes } from "@opentui/core";
 var nextId = 0;
 var tui = async (api) => {
   const [toasts, setToasts] = createSignal([]);
@@ -30,20 +31,45 @@ var tui = async (api) => {
     });
   });
   api.lifecycle.onDispose(unsub);
+  setTimeout(() => {
+    api.client.tui.showToast({
+      title: "Toast Stack",
+      message: "Plugin loaded \u2713 (1/3)",
+      variant: "success",
+      duration: 8000
+    });
+  }, 1500);
+  setTimeout(() => {
+    api.client.tui.showToast({
+      title: "Toast Stack",
+      message: "Stacking works \u2713 (2/3)",
+      variant: "info",
+      duration: 8000
+    });
+  }, 2500);
+  setTimeout(() => {
+    api.client.tui.showToast({
+      title: "Toast Stack",
+      message: "Up to 3 at once \u2713 (3/3)",
+      variant: "warning",
+      duration: 8000
+    });
+  }, 3500);
   api.slots.register({
     slots: {
       app: (ctx) => {
-        const theme = ctx.theme.current;
+        const theme = () => ctx.theme.current;
         const variantColor = (variant) => {
+          const t = theme();
           switch (variant) {
             case "error":
-              return theme.error;
+              return t.error;
             case "warning":
-              return theme.warning;
+              return t.warning;
             case "success":
-              return theme.success;
+              return t.success;
             default:
-              return theme.info;
+              return t.info;
           }
         };
         return (() => {
@@ -72,14 +98,24 @@ var tui = async (api) => {
                   var _c$ = _$memo(() => !!toast.title);
                   return () => _c$() && (() => {
                     var _el$4 = _$createElement("text");
-                    _$setProp(_el$4, "bold", true);
-                    _$setProp(_el$4, "color", color);
+                    _$setProp(_el$4, "fg", color);
                     _$insert(_el$4, () => toast.title);
+                    _$effect((_$p) => _$setProp(_el$4, "attributes", TextAttributes.BOLD, _$p));
                     return _el$4;
                   })();
                 })(), _el$3);
+                _$setProp(_el$3, "wrapMode", "word");
+                _$setProp(_el$3, "width", "100%");
                 _$insert(_el$3, () => toast.message);
-                _$effect((_$p) => _$setProp(_el$3, "color", theme.text, _$p));
+                _$effect((_p$) => {
+                  var _v$ = theme().backgroundPanel, _v$2 = theme().text;
+                  _v$ !== _p$.e && (_p$.e = _$setProp(_el$2, "backgroundColor", _v$, _p$.e));
+                  _v$2 !== _p$.t && (_p$.t = _$setProp(_el$3, "fg", _v$2, _p$.t));
+                  return _p$;
+                }, {
+                  e: undefined,
+                  t: undefined
+                });
                 return _el$2;
               })();
             }

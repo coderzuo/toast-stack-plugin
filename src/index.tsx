@@ -1,4 +1,5 @@
 import { createSignal, For } from "solid-js";
+import { TextAttributes } from "@opentui/core";
 import type { TuiPlugin, TuiPluginModule } from "@opencode-ai/plugin/tui";
 
 type QueuedToast = {
@@ -16,7 +17,10 @@ const tui: TuiPlugin = async (api) => {
 
   const addToast = (toast: Omit<QueuedToast, "id">) => {
     const id = nextId++;
-    setToasts((prev) => [...(prev.length >= 3 ? prev.slice(1) : prev), { ...toast, id }]);
+    setToasts((prev) => [
+      ...(prev.length >= 3 ? prev.slice(1) : prev),
+      { ...toast, id },
+    ]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, toast.duration);
@@ -33,21 +37,29 @@ const tui: TuiPlugin = async (api) => {
 
   api.lifecycle.onDispose(unsub);
 
+  // Fire 3 startup test toasts so the overlay is immediately visible on load
+  setTimeout(() => {
+    void api.client.tui.showToast({ title: "Toast Stack", message: "Plugin loaded ✓ (1/3)", variant: "success", duration: 8000 });
+  }, 1500);
+  setTimeout(() => {
+    void api.client.tui.showToast({ title: "Toast Stack", message: "Stacking works ✓ (2/3)", variant: "info", duration: 8000 });
+  }, 2500);
+  setTimeout(() => {
+    void api.client.tui.showToast({ title: "Toast Stack", message: "Up to 3 at once ✓ (3/3)", variant: "warning", duration: 8000 });
+  }, 3500);
+
   api.slots.register({
     slots: {
       app: (ctx) => {
-        const theme = ctx.theme.current;
+        const theme = () => ctx.theme.current;
 
         const variantColor = (variant: QueuedToast["variant"]) => {
+          const t = theme();
           switch (variant) {
-            case "error":
-              return theme.error;
-            case "warning":
-              return theme.warning;
-            case "success":
-              return theme.success;
-            default:
-              return theme.info;
+            case "error":   return t.error;
+            case "warning": return t.warning;
+            case "success": return t.success;
+            default:        return t.info;
           }
         };
 
@@ -67,16 +79,22 @@ const tui: TuiPlugin = async (api) => {
                   <box
                     border
                     borderColor={color}
+                    backgroundColor={theme().backgroundPanel}
                     paddingX={1}
                     paddingY={0}
                     flexDirection="column"
                   >
                     {toast.title && (
-                      <text bold color={color}>
+                      <text
+                        attributes={TextAttributes.BOLD}
+                        fg={color}
+                      >
                         {toast.title}
                       </text>
                     )}
-                    <text color={theme.text}>{toast.message}</text>
+                    <text fg={theme().text} wrapMode="word" width="100%">
+                      {toast.message}
+                    </text>
                   </box>
                 );
               }}
