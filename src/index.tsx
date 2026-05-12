@@ -1,5 +1,5 @@
 import { createSignal, For } from "solid-js";
-import type { TuiPlugin } from "@opencode-ai/plugin/tui";
+import type { TuiPlugin, TuiPluginModule } from "@opencode-ai/plugin/tui";
 
 type QueuedToast = {
   id: number;
@@ -11,7 +11,7 @@ type QueuedToast = {
 
 let nextId = 0;
 
-export const tui: TuiPlugin = async (api) => {
+const tui: TuiPlugin = async (api) => {
   const [toasts, setToasts] = createSignal<QueuedToast[]>([]);
 
   const addToast = (toast: Omit<QueuedToast, "id">) => {
@@ -87,3 +87,5 @@ export const tui: TuiPlugin = async (api) => {
     },
   });
 };
+
+export default { tui } satisfies TuiPluginModule;

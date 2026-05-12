@@ -90,6 +90,9 @@ var tui = async (api) => {
     }
   });
 };
-export {
+var src_default = {
   tui
+};
+export {
+  src_default as default
 };
