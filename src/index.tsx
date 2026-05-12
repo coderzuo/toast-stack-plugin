@@ -88,4 +88,4 @@ const tui: TuiPlugin = async (api) => {
   });
 };
 
-export default { tui } satisfies TuiPluginModule;
+export default { id: "toast-stack", tui } satisfies TuiPluginModule;

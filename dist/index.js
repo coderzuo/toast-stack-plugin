@@ -91,6 +91,7 @@ var tui = async (api) => {
   });
 };
 var src_default = {
+  id: "toast-stack",
   tui
 };
 export {
